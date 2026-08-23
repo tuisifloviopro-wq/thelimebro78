@@ -1,0 +1,98 @@
+-- Rayfield UI Library Template (NICEPHN Hub - Permanent Key System)
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "NICEPHN HUB | Universal",
+   LoadingTitle = "NICEPHN HUB",
+   LoadingSubtitle = "Đang xác thực hệ thống...",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "NICEPHN_Hub",
+      FileName = "Config"
+   },
+   KeySystem = true, -- Bật hệ thống Key
+   KeySettings = {
+      Title = "NICEPHN HUB - Xác Thực Key",
+      Subtitle = "Quyền truy cập vĩnh viễn",
+      Note = "Nhập key để sử dụng bản Vĩnh Viễn (ADMINNICEFREEKEYVINHVIEN)",
+      FileName = "NICEPHNKeyVinhVien",
+      SaveKey = true,
+      GrabKeyFromSite = false,
+      Key = {"ADMINNICEFREEKEYVINHVIEN"} -- Key chuẩn vĩnh viễn của cậu đây
+   }
+})
+
+-- Tạo 3 Tab chính gọn gàng
+local TabInfo = Window:CreateTab("Thông tin", 4483362458)
+local TabScript = Window:CreateTab("Tổng Hợp", 4483362458)
+local TabOpt = Window:CreateTab("Fix Lag", 4483362458)
+
+-- Tab 1: Thông tin
+TabInfo:CreateSection("Thông tin người chơi")
+TabInfo:CreateParagraph({Title = "Tên hiển thị", Content = game:GetService("Players").LocalPlayer.Name})
+TabInfo:CreateParagraph({Title = "Tên đăng nhập", Content = game:GetService("Players").LocalPlayer.DisplayName})
+TabInfo:CreateParagraph({Title = "Trạng thái Key", Content = "Đã kích hoạt Vĩnh Viễn (Lifetime)"})
+
+TabInfo:CreateSection("Hệ thống")
+TabInfo:CreateToggle({
+   Name = "Anti-AFK (Chống văng game)",
+   CurrentValue = false,
+   Flag = "AntiAFK",
+   Callback = function(Value)
+      if Value then
+         local vu = game:GetService("VirtualUser")
+         game:GetService("Players").LocalPlayer.Idled:Connect(function()
+            vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+            task.wait(1)
+            vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+         end)
+         Rayfield:Notify({Title = "Anti-AFK", Content = "Đã bật chống AFK thành công!", Duration = 3})
+      end
+   end,
+})
+
+-- Tab 2: Tổng hợp Script
+TabScript:CreateSection("Script Blox Fruits")
+TabScript:CreateButton({
+   Name = "Redz Hub",
+   Callback = function()
+      Rayfield:Notify({Title = "NICEPHN", Content = "Đang tải Redz Hub...", Duration = 3})
+      local success, err = pcall(function()
+         loadstring(game:HttpGet("https://raw.githubusercontent.com/huy384/redzHub/refs/heads/main/redzHub.lua"))()
+      end)
+      if not success then
+         Rayfield:Notify({Title = "Lỗi", Content = "Không thể tải Redz Hub: " .. tostring(err), Duration = 5})
+      end
+   end,
+})
+
+-- Tab 3: Fix Lag & Tối ưu hóa
+TabOpt:CreateSection("Hiệu suất & Đồ họa")
+TabOpt:CreateButton({
+   Name = "Fix Lag Turbo",
+   Callback = function()
+      local terrain = workspace:FindFirstChildOfClass("Terrain")
+      if terrain then
+         terrain.WaterWaveSize = 0
+         terrain.WaterWaveSpeed = 0
+         terrain.WaterReflectance = 0
+         terrain.WaterTransparency = 0
+      end
+      Rayfield:Notify({Title = "Thành công", Content = "Đã bật Fix Lag Turbo!", Duration = 3})
+   end,
+})
+
+TabOpt:CreateButton({
+   Name = "Low Texture (Giảm đồ họa)",
+   Callback = function()
+      for _, v in pairs(workspace:GetDescendants()) do
+         if v:IsA("BasePart") then
+            v.Material = Enum.Material.SmoothPlastic
+            v.Reflectance = 0
+         end
+      end
+      Rayfield:Notify({Title = "Thành công", Content = "Đã tối ưu hóa texture thành công!", Duration = 3})
+   end,
+})
+
+Rayfield:LoadConfiguration()
